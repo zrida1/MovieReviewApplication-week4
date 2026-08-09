@@ -11,6 +11,7 @@ import com.example.moviewreviewapplication.repository.CategoryRepository;
 import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.service.MovieService;
 import com.example.moviewreviewapplication.specification.MovieSpecification;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -34,6 +35,7 @@ public class MovieServiceImpl implements MovieService {
         this.categoryRepository = categoryRepository;
     }
 
+    @Cacheable(value = "movies", key = "#id")
     public MovieResponseDTO getMovieById(Long id) {
         return movieMapper.toResponseDTO(movieRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Movie not found with id: " + id)));
     }
