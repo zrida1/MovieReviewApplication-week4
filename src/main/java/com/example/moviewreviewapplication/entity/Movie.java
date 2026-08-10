@@ -29,5 +29,5 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "category_id")
     )
     private List<Category> categories;
-
+    private String posterFileName;
 }
