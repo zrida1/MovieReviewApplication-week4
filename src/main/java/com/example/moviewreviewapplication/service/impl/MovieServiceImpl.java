@@ -124,6 +124,7 @@ public class MovieServiceImpl implements MovieService {
                 .toList();
     }
     @Override
+    @Cacheable(value = "filteredMovies", key = "#genre + '-' + #rating + '-' + #year + '-' + #title")
     public List<MovieResponseDTO> filterMovies(
             String genre,
             Double rating,
