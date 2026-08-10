@@ -11,6 +11,7 @@ import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.repository.ReviewRepository;
 import com.example.moviewreviewapplication.repository.UserRepository;
 import com.example.moviewreviewapplication.service.ReviewService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -33,10 +34,12 @@ public class ReviewServiceImpl implements ReviewService {
         this.reviewMapper = reviewMapper;
     }
 
+    @Cacheable(value = "allReviews", key = "#page + '-' + #size + '-' + #sortBy")
     public Page<ReviewResponseDTO> getAllReviews(Integer page, Integer size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return reviewRepository.findAll(pageable).map(reviewMapper::toResponseDTO);
     }
+    @Cacheable(value = "reviews", key = "#id")
 
     public ReviewResponseDTO getReview(Long id){
         return reviewMapper.toResponseDTO(reviewRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Review not found with id: " + id)));
