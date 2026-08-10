@@ -5,6 +5,7 @@ import com.example.moviewreviewapplication.entity.Movie;
 import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.service.FileService;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,7 +20,7 @@ import java.util.UUID;
 @Service
 public class FileServiceImpl implements FileService {
     private final MovieRepository movieRepository;
-
+    private final Tika tika = new Tika();
     private final Path uploadDirectory =
             Paths.get("uploads/posters");
 
@@ -47,8 +48,11 @@ public class FileServiceImpl implements FileService {
             throw new IllegalArgumentException( "File size cannot exceed 5 MB");
         }
 
-        if (!ALLOWED_TYPES.contains(file.getContentType())) {
-            throw new IllegalArgumentException("Only JPEG and PNG files are allowed");
+        String detectedType = tika.detect(file.getBytes());
+
+        if (!ALLOWED_TYPES.contains(detectedType)) {
+            throw new IllegalArgumentException(
+                    "Only JPEG and PNG files are allowed");
         }
 
         Files.createDirectories(uploadDirectory);
