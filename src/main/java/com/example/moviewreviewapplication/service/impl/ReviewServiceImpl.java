@@ -40,7 +40,6 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewRepository.findAll(pageable).map(reviewMapper::toResponseDTO);
     }
     @Cacheable(value = "reviews", key = "#id")
-
     public ReviewResponseDTO getReview(Long id){
         return reviewMapper.toResponseDTO(reviewRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Review not found with id: " + id)));
     }
