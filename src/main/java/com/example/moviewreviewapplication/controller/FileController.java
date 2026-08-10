@@ -1,5 +1,6 @@
 package com.example.moviewreviewapplication.controller;
 
+import com.example.moviewreviewapplication.dto.FileResponse;
 import com.example.moviewreviewapplication.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -40,11 +41,14 @@ public class FileController {
     public ResponseEntity<byte[]> getPoster(
             @PathVariable Long movieId) throws IOException {
 
-        byte[] file = fileService.downloadMoviePoster(movieId);
+        FileResponse fileResponse =
+                fileService.downloadMoviePoster(movieId);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "inline")
-                .contentType(MediaType.IMAGE_JPEG)
-                .body(file);
+                .contentType(
+                        MediaType.parseMediaType(fileResponse.getContentType())
+                )
+                .body(fileResponse.getData());
     }
 }

@@ -1,5 +1,6 @@
 package com.example.moviewreviewapplication.service.impl;
 
+import com.example.moviewreviewapplication.dto.FileResponse;
 import com.example.moviewreviewapplication.entity.Movie;
 import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.repository.MovieRepository;
@@ -62,22 +63,36 @@ public class FileServiceImpl implements FileService {
         return fileName;
     }
     @Override
-    public byte[] downloadMoviePoster(Long movieId)throws IOException {
+    public FileResponse downloadMoviePoster(Long movieId)
+            throws IOException {
 
         Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() ->new ResourceNotFoundException("Movie not found with id: " + movieId));
+                .orElseThrow(() ->
+                        new ResourceNotFoundException(
+                                "Movie not found with id: " + movieId));
 
         if (movie.getPosterFileName() == null) {
-            throw new ResourceNotFoundException("Poster not found for movie");
+            throw new ResourceNotFoundException(
+                    "Poster not found for movie");
         }
 
-        Path filePath = uploadDirectory.resolve(movie.getPosterFileName());
+        Path filePath =
+                uploadDirectory.resolve(movie.getPosterFileName());
 
         if (!Files.exists(filePath)) {
-            throw new ResourceNotFoundException("Poster file not found");
+            throw new ResourceNotFoundException(
+                    "Poster file not found");
         }
 
-        return Files.readAllBytes(filePath);
+        byte[] data = Files.readAllBytes(filePath);
+
+        String contentType = Files.probeContentType(filePath);
+
+        if (contentType == null) {
+            contentType = "application/octet-stream";
+        }
+
+        return new FileResponse(data, contentType);
     }
 
     private String getExtension(String filename) {
