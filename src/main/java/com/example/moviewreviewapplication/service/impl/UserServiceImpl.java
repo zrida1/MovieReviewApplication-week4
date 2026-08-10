@@ -39,8 +39,9 @@ public class UserServiceImpl implements UserService {
     }
 
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO){
-        userRequestDTO.setPassword(encoder.encode(userRequestDTO.getPassword()));
-        return userMapper.toResponseDTO(userRepository.save(userMapper.toEntity(userRequestDTO)));
+        User  user = userMapper.toEntity(userRequestDTO);
+        user.setPassword(encoder.encode(userRequestDTO.getPassword()));
+        return userMapper.toResponseDTO(userRepository.save(user));
     }
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO){
         User user = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: " + id));
