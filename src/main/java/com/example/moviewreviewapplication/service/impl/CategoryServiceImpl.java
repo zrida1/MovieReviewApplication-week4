@@ -7,6 +7,7 @@ import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.mapper.CategoryMapper;
 import com.example.moviewreviewapplication.repository.CategoryRepository;
 import com.example.moviewreviewapplication.service.CategoryService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,7 @@ public class CategoryServiceImpl implements CategoryService {
         this.categoryRepository = categoryRepository;
         this.categoryMapper = categoryMapper;
     }
+    @Cacheable(value = "allCategories", key = "#page + '-' + #size + '-' + #sortBy")
     @Override
     public Page<CategoryResponseDTO> getAllCategories(int page, int size, String sortBy) {
 
@@ -33,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(categoryMapper::toResponseDTO);
     }
 
+    @Cacheable(value = "categories", key = "#id")
     @Override
     public CategoryResponseDTO getCategory(Long id) {
 

@@ -7,6 +7,7 @@ import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.mapper.UserMapper;
 import com.example.moviewreviewapplication.repository.UserRepository;
 import com.example.moviewreviewapplication.service.UserService;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,10 +28,12 @@ public class UserServiceImpl implements UserService {
         this.encoder = encoder;
     }
 
+    @Cacheable(value = "allUsers", key = "#page + '-' + #size + '-' + #sortBy")
     public Page<UserResponseDTO> getAllUsers(Integer page, Integer size, String sortBy) {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return userRepository.findAll(pageable).map(userMapper::toResponseDTO);
     }
+    @Cacheable(value = "users", key = "#id")
     public UserResponseDTO getUser(Long id) {
         return userMapper.toResponseDTO(userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: " + id)));
     }
