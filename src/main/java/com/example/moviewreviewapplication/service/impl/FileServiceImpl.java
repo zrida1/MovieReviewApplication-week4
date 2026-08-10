@@ -23,9 +23,7 @@ public class FileServiceImpl implements FileService {
     private final Tika tika = new Tika();
     private final Path uploadDirectory =
             Paths.get("uploads/posters");
-
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
-
     private static final Set<String> ALLOWED_TYPES = Set.of(
             "image/jpeg",
             "image/png"
