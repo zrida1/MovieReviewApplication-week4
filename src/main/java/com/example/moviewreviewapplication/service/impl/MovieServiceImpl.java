@@ -41,6 +41,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Override
+    @Cacheable(value = "allMovies", key = "#page + '-' + #size + '-' + #sortBy")
     public Page<MovieResponseDTO> getAllMoviesWithCategories(int page, int size, String sortBy) {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
