@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
-
     @Async
     @Override
     public void sendReviewNotification(String email, String movieTitle) {
