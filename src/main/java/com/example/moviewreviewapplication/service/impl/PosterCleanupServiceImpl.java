@@ -25,7 +25,7 @@ public class PosterCleanupServiceImpl implements PosterCleanupService {
     }
 
     @Override
-    @Scheduled(fixedRate = 30000)
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
     public void cleanUnusedPosters() throws IOException {
 
         if (!Files.exists(uploadDirectory)) {
