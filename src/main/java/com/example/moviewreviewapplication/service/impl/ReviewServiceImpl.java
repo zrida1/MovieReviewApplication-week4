@@ -10,6 +10,7 @@ import com.example.moviewreviewapplication.mapper.ReviewMapper;
 import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.repository.ReviewRepository;
 import com.example.moviewreviewapplication.repository.UserRepository;
+import com.example.moviewreviewapplication.service.NotificationService;
 import com.example.moviewreviewapplication.service.ReviewService;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -27,11 +28,13 @@ public class ReviewServiceImpl implements ReviewService {
     private final UserRepository userRepository;
     private final MovieRepository movieRepository;
     private final ReviewMapper reviewMapper;
-    ReviewServiceImpl(ReviewRepository reviewRepository, UserRepository userRepository, MovieRepository movieRepository, ReviewMapper reviewMapper) {
+    private final NotificationService notificationService;
+    ReviewServiceImpl(ReviewRepository reviewRepository, UserRepository userRepository, MovieRepository movieRepository, ReviewMapper reviewMapper, NotificationService notificationService) {
         this.reviewRepository = reviewRepository;
         this.userRepository = userRepository;
         this.movieRepository = movieRepository;
         this.reviewMapper = reviewMapper;
+        this.notificationService = notificationService;
     }
 
     @Cacheable(value = "allReviews", key = "#page + '-' + #size + '-' + #sortBy")
@@ -50,7 +53,11 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = reviewMapper.toEntity(dto);
         review.setMovie(movie);
         review.setUser(user);
-        return   reviewMapper.toResponseDTO(reviewRepository.save(review));
+        Review savedReview = reviewRepository.save(review);
+
+        notificationService.sendReviewNotification(user.getEmail(), movie.getTitle());
+
+        return reviewMapper.toResponseDTO(savedReview);
     }
 
     public ReviewResponseDTO updateReview(Long id, ReviewRequestDTO dto){
