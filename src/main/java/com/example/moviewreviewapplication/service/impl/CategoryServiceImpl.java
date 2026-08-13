@@ -7,6 +7,7 @@ import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.mapper.CategoryMapper;
 import com.example.moviewreviewapplication.repository.CategoryRepository;
 import com.example.moviewreviewapplication.service.CategoryService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +49,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = {"categories", "allCategories", "movies", "allMovies", "filteredMovies"}, allEntries = true)
     public CategoryResponseDTO createCategory(CategoryRequestDTO dto) {
 
         return categoryMapper.toResponseDTO(
@@ -55,6 +57,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = {"categories", "allCategories", "movies", "allMovies", "filteredMovies"}, allEntries = true)
     public CategoryResponseDTO updateCategory(Long id,
                                               CategoryRequestDTO dto) {
 
@@ -70,6 +73,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = {"categories", "allCategories", "movies", "allMovies", "filteredMovies"}, allEntries = true)
     public void deleteCategory(Long id) {
 
         Category category = categoryRepository.findById(id)
