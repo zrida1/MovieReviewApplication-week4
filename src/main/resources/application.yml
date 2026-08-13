@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: MovieReviewApplication
+  profiles:
+    active: dev
+
