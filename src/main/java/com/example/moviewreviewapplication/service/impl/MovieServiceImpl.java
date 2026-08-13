@@ -11,6 +11,7 @@ import com.example.moviewreviewapplication.repository.CategoryRepository;
 import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.service.MovieService;
 import com.example.moviewreviewapplication.specification.MovieSpecification;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +48,7 @@ public class MovieServiceImpl implements MovieService {
         Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy).ascending());
         return movieRepository.findAll(pageable).map(movieMapper::toResponseDTO);
     }
+    @CacheEvict(value = {"movies", "allMovies", "filteredMovies"}, allEntries = true)
     public MovieResponseDTO updateMovie(Long id, MovieRequestDTO dto) {
         Movie movie = movieRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Movie not found with id: " + id));
         List<Category> categories = categoryRepository.findAllById(dto.getCategoryIds());
@@ -60,6 +62,7 @@ public class MovieServiceImpl implements MovieService {
 
     }
 
+    @CacheEvict(value = {"movies", "allMovies", "filteredMovies"}, allEntries = true)
     public void deleteMovie(Long id) {
         Movie movie = movieRepository.findById(id)
                 .orElseThrow(() ->
@@ -69,6 +72,7 @@ public class MovieServiceImpl implements MovieService {
     }
 
     @Transactional
+    @CacheEvict(value = {"movies", "allMovies", "filteredMovies"}, allEntries = true)
     public MovieResponseDTO createMovie(MovieRequestDTO dto){
         List<Category> categories = categoryRepository.findAllById(dto.getCategoryIds());
         if (categories.size() != dto.getCategoryIds().size()) {
