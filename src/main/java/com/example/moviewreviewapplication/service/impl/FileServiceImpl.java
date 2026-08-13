@@ -6,6 +6,8 @@ import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.repository.MovieRepository;
 import com.example.moviewreviewapplication.service.FileService;
 import org.apache.tika.Tika;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,6 +36,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    @CacheEvict(value = {"movies", "allMovies", "filteredMovies"}, allEntries = true)
     public String uploadMoviePoster(Long movieId, MultipartFile file)throws IOException {
 
         Movie movie = movieRepository.findById(movieId).orElseThrow(() ->new ResourceNotFoundException("Movie not found with id: " + movieId));
