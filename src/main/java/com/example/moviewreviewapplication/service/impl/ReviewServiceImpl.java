@@ -12,6 +12,7 @@ import com.example.moviewreviewapplication.repository.ReviewRepository;
 import com.example.moviewreviewapplication.repository.UserRepository;
 import com.example.moviewreviewapplication.service.NotificationService;
 import com.example.moviewreviewapplication.service.ReviewService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -47,6 +48,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toResponseDTO(reviewRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Review not found with id: " + id)));
     }
 
+    @CacheEvict(value = {"allReviews", "reviews"}, allEntries = true)
     public ReviewResponseDTO createReview(ReviewRequestDTO dto){
         Movie movie = movieRepository.findById(dto.getMovieId()).orElseThrow(()->new ResourceNotFoundException("Movie not found with id: " + dto.getMovieId()));
         User user = userRepository.findById(dto.getUserId()).orElseThrow(()->new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
@@ -60,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
         return reviewMapper.toResponseDTO(savedReview);
     }
 
+    @CacheEvict(value = {"allReviews", "reviews"}, allEntries = true)
     public ReviewResponseDTO updateReview(Long id, ReviewRequestDTO dto){
         Review review = reviewRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Review not found with id: " + id));
         Movie movie = movieRepository.findById(dto.getMovieId()).orElseThrow(()->new ResourceNotFoundException("Movie not found with id: " + dto.getMovieId()));
@@ -71,6 +74,7 @@ public class ReviewServiceImpl implements ReviewService {
         return   reviewMapper.toResponseDTO(reviewRepository.save(review));
     }
 
+    @CacheEvict(value = {"allReviews", "reviews"}, allEntries = true)
     public void deleteReview(Long id){
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() ->
@@ -80,6 +84,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
     @Override
     @Transactional
+    @CacheEvict(value = {"allReviews", "reviews"}, allEntries = true)
     public ReviewResponseDTO createReviewWithTransaction(ReviewRequestDTO dto) {
 
         Movie movie = movieRepository.findById(dto.getMovieId())
