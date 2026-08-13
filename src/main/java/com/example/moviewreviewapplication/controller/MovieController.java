@@ -4,6 +4,7 @@ import com.example.moviewreviewapplication.dto.MovieRequestDTO;
 import com.example.moviewreviewapplication.dto.MovieResponseDTO;
 import com.example.moviewreviewapplication.service.MovieService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 
 @Tag(name = "Movies", description = "Movie Management APIs")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/movies")
 public class MovieController {

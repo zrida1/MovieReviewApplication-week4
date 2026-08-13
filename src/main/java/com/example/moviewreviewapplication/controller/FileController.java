@@ -3,6 +3,7 @@ package com.example.moviewreviewapplication.controller;
 import com.example.moviewreviewapplication.dto.FileResponse;
 import com.example.moviewreviewapplication.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/movies")
 @Tag(name = "Movie Posters", description = "Movie poster upload and download APIs")

@@ -5,6 +5,7 @@ import com.example.moviewreviewapplication.dto.ReviewResponseDTO;
 import com.example.moviewreviewapplication.entity.Review;
 import com.example.moviewreviewapplication.service.ReviewService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Tag(name = "Reviews", description = "Review Management APIs")
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/reviews")
 public class ReviewController {
