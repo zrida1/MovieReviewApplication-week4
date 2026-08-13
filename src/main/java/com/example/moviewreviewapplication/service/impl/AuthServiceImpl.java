@@ -11,6 +11,7 @@ import com.example.moviewreviewapplication.mapper.UserMapper;
 import com.example.moviewreviewapplication.repository.UserRepository;
 import com.example.moviewreviewapplication.service.AuthService;
 import com.example.moviewreviewapplication.service.JwtService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @CacheEvict(value = {"allUsers", "users"}, allEntries = true)
     public UserResponseDTO register(UserRequestDTO dto) {
         if (userRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new EmailAlreadyExistsException("Email is already in use.");
