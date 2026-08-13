@@ -7,6 +7,7 @@ import com.example.moviewreviewapplication.exception.ResourceNotFoundException;
 import com.example.moviewreviewapplication.mapper.UserMapper;
 import com.example.moviewreviewapplication.repository.UserRepository;
 import com.example.moviewreviewapplication.service.UserService;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -38,11 +39,14 @@ public class UserServiceImpl implements UserService {
         return userMapper.toResponseDTO(userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: " + id)));
     }
 
+    @CacheEvict(value = {"allUsers", "users"}, allEntries = true)
     public UserResponseDTO createUser(UserRequestDTO userRequestDTO){
         User  user = userMapper.toEntity(userRequestDTO);
         user.setPassword(encoder.encode(userRequestDTO.getPassword()));
         return userMapper.toResponseDTO(userRepository.save(user));
     }
+
+    @CacheEvict(value = {"allUsers", "users"}, allEntries = true)
     public UserResponseDTO updateUser(Long id, UserRequestDTO userRequestDTO){
         User user = userRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("User not found with id: " + id));
         user.setName(userRequestDTO.getName());
@@ -50,6 +54,8 @@ public class UserServiceImpl implements UserService {
         user.setPassword(encoder.encode(userRequestDTO.getPassword()));
         return userMapper.toResponseDTO(userRepository.save(user));
     }
+
+    @CacheEvict(value = {"allUsers", "users"}, allEntries = true)
     public void deleteUser(Long id){
         User user = userRepository.findById(id)
                 .orElseThrow(() ->
